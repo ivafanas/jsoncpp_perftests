@@ -1,3 +1,6 @@
 [submodule "jsoncpp"]
 	path = jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp
+[submodule "sltbench"]
+	path = sltbench
+	url = https://github.com/ivafanas/sltbench
