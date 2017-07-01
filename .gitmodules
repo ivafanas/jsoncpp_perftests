@@ -7,3 +7,6 @@
 [submodule "googlebench"]
 	path = googlebench
 	url = https://github.com/google/benchmark
+[submodule "nonius"]
+	path = nonius
+	url = https://github.com/rmartinho/nonius
