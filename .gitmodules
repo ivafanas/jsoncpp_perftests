@@ -4,3 +4,6 @@
 [submodule "sltbench"]
 	path = sltbench
 	url = https://github.com/ivafanas/sltbench
+[submodule "googlebench"]
+	path = googlebench
+	url = https://github.com/google/benchmark
