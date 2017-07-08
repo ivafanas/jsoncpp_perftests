@@ -8,6 +8,8 @@ option(JPT_GOOGLEBENCH_INSTALL_DIR "JPT_GOOGLEBENCH_INSTALL_DIR")
 option(JPT_JSONCPP_INSTALL_DIR "JPT_JSONCPP_INSTALL_DIR")
 option(JPT_BUILD_DIR "JPT_BUILD_DIR")
 
+find_package (Threads)
+
 # common tests lib
 add_library(common_tests
 	tests/common/reader_cases.cpp
@@ -22,11 +24,10 @@ target_include_directories(common_tests PUBLIC
 target_link_libraries(common_tests INTERFACE
 	${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a)
 
-	set_target_properties(common_tests PROPERTIES
-		CXX_STANDARD 11
-		CXX_STANDARD_REQUIRED YES
-		CXX_EXTENSIONS NO)
-
+set_target_properties(common_tests PROPERTIES
+	CXX_STANDARD 11
+	CXX_STANDARD_REQUIRED YES
+	CXX_EXTENSIONS NO)
 
 # sltbench performance tests
 add_executable(sltbench_perftests
@@ -45,8 +46,9 @@ target_include_directories(sltbench_perftests PRIVATE
 
 target_link_libraries(sltbench_perftests PRIVATE
 	${JPT_SLTBENCH_INSTALL_DIR}/lib/libsltbench.a
+	${JPT_BUILD_DIR}/libcommon_tests.a
 	${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a
-	${JPT_BUILD_DIR}/libcommon_tests.a)
+	${CMAKE_THREAD_LIBS_INIT})
 
 set_target_properties(sltbench_perftests PROPERTIES
 	CXX_STANDARD 11
@@ -72,8 +74,9 @@ target_include_directories(googlebench_perftests PRIVATE
 
 target_link_libraries(googlebench_perftests PRIVATE
 	${JPT_GOOGLEBENCH_INSTALL_DIR}/lib/libbenchmark.a
+	${JPT_BUILD_DIR}/libcommon_tests.a
 	${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a
-	${JPT_BUILD_DIR}/libcommon_tests.a)
+	${CMAKE_THREAD_LIBS_INIT})
 
 set_target_properties(googlebench_perftests PROPERTIES
 	CXX_STANDARD 11
