@@ -12,10 +12,12 @@ find_package (Threads)
 
 # common tests lib
 add_library(common_tests
-	tests/common/reader_cases.cpp
-	tests/common/reader_cases.h
-	tests/common/writer_cases.cpp
-	tests/common/writer_cases.h)
+	tests/common/reader_cases_generator.h
+	tests/common/reader_runner.cpp
+	tests/common/reader_runner.h
+	tests/common/writer_cases_generator.h
+	tests/common/writer_runner.cpp
+	tests/common/writer_runner.h)
 
 target_include_directories(common_tests PUBLIC
 	${JPT_JSONCPP_INSTALL_DIR}/include
@@ -31,11 +33,10 @@ set_target_properties(common_tests PROPERTIES
 
 # sltbench performance tests
 add_executable(sltbench_perftests
-	tests/sltbench/fast_writer.cpp
+	tests/sltbench/sltbench_generator.h
 	tests/sltbench/main.cpp
 	tests/sltbench/reader.cpp
-	tests/sltbench/styled_stream_writer.cpp
-	tests/sltbench/styled_writer.cpp)
+	tests/sltbench/writer.cpp)
 
 add_dependencies(sltbench_perftests common_tests)
 
@@ -57,15 +58,10 @@ set_target_properties(sltbench_perftests PROPERTIES
 
 # google bench performance tests
 add_executable(googlebench_perftests
-	tests/googlebench/bm_fast_writer.cpp
-	tests/googlebench/bm_fast_writer.h
-	tests/googlebench/bm_reader.cpp
-	tests/googlebench/bm_reader.h
-	tests/googlebench/bm_styled_stream_writer.cpp
-	tests/googlebench/bm_styled_stream_writer.h
-	tests/googlebench/bm_styled_writer.cpp
-	tests/googlebench/bm_styled_writer.h
-	tests/googlebench/main.cpp)
+	tests/googlebench/googlebench_generator.h
+	tests/googlebench/main.cpp
+	tests/googlebench/reader.cpp
+	tests/googlebench/writer.cpp)
 
 target_include_directories(googlebench_perftests PRIVATE
 	tests/common
