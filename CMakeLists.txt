@@ -16,6 +16,9 @@ add_library(common_tests
 	tests/common/reader_cases_generator.h
 	tests/common/reader_runner.cpp
 	tests/common/reader_runner.h
+	tests/common/value_cases_generator.h
+	tests/common/value_runner.cpp
+	tests/common/value_runner.h
 	tests/common/writer_cases_generator.h
 	tests/common/writer_runner.cpp
 	tests/common/writer_runner.h)
@@ -37,6 +40,7 @@ add_executable(sltbench_perftests
 	tests/sltbench/sltbench_generator.h
 	tests/sltbench/main.cpp
 	tests/sltbench/reader.cpp
+	tests/sltbench/value.cpp
 	tests/sltbench/writer.cpp)
 
 add_dependencies(sltbench_perftests common_tests)
@@ -62,6 +66,7 @@ add_executable(googlebench_perftests
 	tests/googlebench/googlebench_generator.h
 	tests/googlebench/main.cpp
 	tests/googlebench/reader.cpp
+	tests/googlebench/value.cpp
 	tests/googlebench/writer.cpp)
 
 add_dependencies(googlebench_perftests common_tests)
@@ -87,6 +92,7 @@ add_executable(nonius_perftests
 	tests/nonius/nonius_generator.h
 	tests/nonius/main.cpp
 	tests/nonius/reader.cpp
+	tests/nonius/value.cpp
 	tests/nonius/writer.cpp)
 
 add_dependencies(nonius_perftests common_tests)
