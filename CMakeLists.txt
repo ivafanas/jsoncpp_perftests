@@ -5,6 +5,7 @@ project(jsoncpp_perftests)
 
 option(JPT_SLTBENCH_INSTALL_DIR "JPT_SLTBENCH_INSTALL_DIR")
 option(JPT_GOOGLEBENCH_INSTALL_DIR "JPT_GOOGLEBENCH_INSTALL_DIR")
+option(JPT_NONIUS_INSTALL_DIR "JPT_NONIUS_INSTALL_DIR")
 option(JPT_JSONCPP_INSTALL_DIR "JPT_JSONCPP_INSTALL_DIR")
 option(JPT_BUILD_DIR "JPT_BUILD_DIR")
 
@@ -63,6 +64,8 @@ add_executable(googlebench_perftests
 	tests/googlebench/reader.cpp
 	tests/googlebench/writer.cpp)
 
+add_dependencies(googlebench_perftests common_tests)
+
 target_include_directories(googlebench_perftests PRIVATE
 	tests/common
 	${JPT_GOOGLEBENCH_INSTALL_DIR}/include
@@ -75,6 +78,30 @@ target_link_libraries(googlebench_perftests PRIVATE
 	${CMAKE_THREAD_LIBS_INIT})
 
 set_target_properties(googlebench_perftests PROPERTIES
+	CXX_STANDARD 11
+	CXX_STANDARD_REQUIRED YES
+	CXX_EXTENSIONS NO)
+
+# nonius bench performance tests
+add_executable(nonius_perftests
+	tests/nonius/nonius_generator.h
+	tests/nonius/main.cpp
+	tests/nonius/reader.cpp
+	tests/nonius/writer.cpp)
+
+add_dependencies(nonius_perftests common_tests)
+
+target_include_directories(nonius_perftests PRIVATE
+	tests/common
+	${JPT_NONIUS_INSTALL_DIR}/include
+	${JPT_JSONCPP_INSTALL_DIR}/include)
+
+target_link_libraries(nonius_perftests PRIVATE
+	${JPT_BUILD_DIR}/libcommon_tests.a
+	${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a
+	${CMAKE_THREAD_LIBS_INIT})
+
+set_target_properties(nonius_perftests PROPERTIES
 	CXX_STANDARD 11
 	CXX_STANDARD_REQUIRED YES
 	CXX_EXTENSIONS NO)
