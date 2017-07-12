@@ -13,6 +13,8 @@ find_package (Threads)
 
 # common tests lib
 add_library(common_tests
+	tests/common/json_examples.cpp
+	tests/common/json_examples.h
 	tests/common/reader_cases_generator.h
 	tests/common/reader_runner.cpp
 	tests/common/reader_runner.h
