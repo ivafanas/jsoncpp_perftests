@@ -1,6 +1,26 @@
 #include "json_examples.h"
 
 
+const std::string json_example_astros = R"(
+    {
+      \"number\": 3,
+      \"message\": \"success\",
+      \"people\": [
+        {
+            \"name\": \"Peggy Whitson\",
+            \"craft\": \"ISS\"
+        },
+        {
+            \"name\": \"Fyodor Yurchikhin\",
+            \"craft\": \"ISS\"
+        },
+        {
+            \"name\": \"Jack Fischer\",
+            \"craft\": \"ISS\"
+        }
+      ]
+    }
+)";
 const std::string json_example_basic_int = "{\"value\": 0}";
 const std::string json_example_basic_double = "{\"value\": 0.0}";
 const std::string json_example_basic_string = "{\"value\": \"hohoho\"}";
@@ -53,6 +73,60 @@ const std::string json_example_big_object = R"(
             \"value_33\": 1,
         }
     )";
+const std::string json_example_china_idp = R"(
+    [
+        {
+            \"page\": 1,
+            \"pages\" :1,
+            \"per_page\": \"5000\",
+            \"total\":57
+        },
+        [
+            {
+                \"indicator\": { \"id\": \"NY.GDP.MKTP.CD\", \"value\": \"GDP (current US$)\" },
+                \"country\": { \"id\": \"CN\", \"value\": \"China\" },
+                \"value\": \"11199145157649.2\",
+                \"decimal\": \"0\",
+                \"date\": \"2016\"
+            },
+            {
+                \"indicator\": { \"id\": \"NY.GDP.MKTP.CD\", \"value\": \"GDP (current US$)\" },
+                \"country\": { \"id\": \"CN\", \"value\": \"China\" },
+                \"value\": \"11064664793255.7\",
+                \"decimal\": \"0\",
+                \"date\":\"2015\"
+            },
+            {
+                \"indicator\": { \"id\": \"NY.GDP.MKTP.CD\", \"value\": \"GDP (current US$)\" },
+                \"country\": { \"id\": \"CN\", \"value\": \"China\" },
+                \"value\": \"10482371325324.7\",
+                \"decimal\": \"0\",
+                \"date\": \"2014\"
+            },
+            {
+                \"indicator\": { \"id\": \"NY.GDP.MKTP.CD\", \"value\": \"GDP (current US$)\" },
+                \"country\": {\"id\": \"CN\", \"value\": \"China\" },
+                \"value\": \"9607224248684.59\",
+                \"decimal\": \"0\",
+                \"date\": \"2013\"
+            },
+            {
+                \"indicator\": { \"id\": \"NY.GDP.MKTP.CD\", \"value\": \"GDP (current US$)\" },
+                \"country\": { \"id\": \"CN\", \"value\": \"China\" },
+                \"value\": \"8560546868811.69\",
+                \"decimal\": \"0\",
+                \"date\": \"2012\"
+            },
+            {
+                \"indicator\": { \"id\": \"NY.GDP.MKTP.CD\", \"value\": \"GDP (current US$)\" },
+                \"country\": { \"id\": \"CN\", \"value\": \"China\" },
+                \"value\": \"7572554360442.62\",
+                \"decimal\": \"0\",
+                \"date\": \"2011\"
+            }
+        ]
+    ]
+)";
 const std::string json_example_colors = R"(
     {
         \"red\": \"#f00\",
@@ -69,6 +143,56 @@ const std::string json_example_geopoint = R"(
         \"lon\": 37.617,
         \"lat\": 55.75
     )";
+    const std::string json_example_gmaps = R"(
+        {
+            \"markers\": [
+        		{
+        			\"point\": { \"lat\": 40.266044, \"lon\": -74.718479 },
+        			\"homeTeam\": \"Lawrence Library\",
+        			\"awayTeam\": \"LUGip\",
+        			\"markerImage\": \"images/red.png\",
+        			\"information\": \"Linux users group meets second Wednesday of each month.\",
+        			\"fixture\": \"Wednesday 7pm\",
+        			\"capacity\": \"\",
+        			\"previousScore\": \"\"
+        		},
+        		{
+        			\"point\": { \"lat\": 40.211600, \"lon\": -74.695702 },
+        			\"homeTeam\": \"Hamilton Library\",
+        			\"awayTeam\": \"LUGip HW SIG\",
+        			\"markerImage\": \"images/white.png\",
+        			\"information\": \"Linux users can meet the first Tuesday of the month to work out harward and configuration issues.\",
+        			\"fixture\": \"Tuesday 7pm\",
+        			\"capacity\": \"\",
+        			\"tv\": \"\"
+        		},
+        		{
+        			\"point\": { \"lat\": 40.294535, \"lon\": -74.682012 },
+        			\"homeTeam\": \"Applebees\",
+        			\"awayTeam\": \"After LUPip Mtg Spot\",
+        			\"markerImage\": \"images/newcastle.png\",
+        			\"information\": \"Some of us go there after the main LUGip meeting, drink brews, and talk.\",
+        			\"fixture\": \"Wednesday whenever\",
+        			\"capacity\": \"2 to 4 pints\",
+        			\"tv\":\"\"
+        		},
+        ] }
+    )";
+const std::string json_example_gzip = R"(
+    {
+      \"gzipped\": true,
+      \"headers\": {
+        \"Accept\": \"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\",
+        \"Accept-Encoding\": \"gzip, deflate\",
+        \"Accept-Language\": \"en-US,en;q=0.5\",
+        \"Connection\": \"close\",
+        \"Host\": \"httpbin.org\",
+        \"Upgrade-Insecure-Requests\": \"1\",
+        \"User-Agent\": \"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0\"
+      },
+      \"method\": \"GET\",
+      \"origin\": \"37.195.125.56\"
+    })";
 const std::string json_example_employee = R"(
     {
         \"name\": \"John\",
@@ -76,41 +200,6 @@ const std::string json_example_employee = R"(
         \"age\": 42,
         \"salary\": 0
     })";
-const std::string json_example_gmaps = R"(
-    {
-        \"markers\": [
-    		{
-    			\"point\": { \"lat\": 40.266044, \"lon\": -74.718479 },
-    			\"homeTeam\": \"Lawrence Library\",
-    			\"awayTeam\": \"LUGip\",
-    			\"markerImage\": \"images/red.png\",
-    			\"information\": \"Linux users group meets second Wednesday of each month.\",
-    			\"fixture\": \"Wednesday 7pm\",
-    			\"capacity\": \"\",
-    			\"previousScore\": \"\"
-    		},
-    		{
-    			\"point\": { \"lat\": 40.211600, \"lon\": -74.695702 },
-    			\"homeTeam\": \"Hamilton Library\",
-    			\"awayTeam\": \"LUGip HW SIG\",
-    			\"markerImage\": \"images/white.png\",
-    			\"information\": \"Linux users can meet the first Tuesday of the month to work out harward and configuration issues.\",
-    			\"fixture\": \"Tuesday 7pm\",
-    			\"capacity\": \"\",
-    			\"tv\": \"\"
-    		},
-    		{
-    			\"point\": { \"lat\": 40.294535, \"lon\": -74.682012 },
-    			\"homeTeam\": \"Applebees\",
-    			\"awayTeam\": \"After LUPip Mtg Spot\",
-    			\"markerImage\": \"images/newcastle.png\",
-    			\"information\": \"Some of us go there after the main LUGip meeting, drink brews, and talk.\",
-    			\"fixture\": \"Wednesday whenever\",
-    			\"capacity\": \"2 to 4 pints\",
-    			\"tv\":\"\"
-    		},
-    ] }
-)";
 const std::string json_example_menu = R"(
     {
         \"menu\":
