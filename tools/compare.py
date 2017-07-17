@@ -47,12 +47,16 @@ def _parse_nonius_outfile(outfile):
         return rv
 
 
-_Benchmark = namedtuple('Benchmark', 'reporter_option,parse_fun')
+_Benchmark = namedtuple('Benchmark',
+                        'reporter_option,filter_option_re,parse_fun')
 _BM_SLTBENCH = _Benchmark(reporter_option='--reporter=json',
+                          filter_option_re='--filter=".*{filter}.*"',
                           parse_fun=_parse_sltbench_outfile)
 _BM_GOOGLEBENCH = _Benchmark(reporter_option='--benchmark_format=json',
+                             filter_option_re='--benchmark_filter="{filter}"',
                              parse_fun=_parse_googlebench_outfile)
 _BM_NONIUS = _Benchmark(reporter_option='--reporter=junit',
+                        filter_option_re='--filter=".*{filter}.*"',
                         parse_fun=_parse_nonius_outfile)
 
 
@@ -63,6 +67,7 @@ def _parse_args():
     parser.add_argument('--sltbench_bin', required=True, type=str)
     parser.add_argument('--googlebench_bin', required=True, type=str)
     parser.add_argument('--nonius_bin', required=True, type=str)
+    parser.add_argument('--filter', required=False, type=str, default='')
     parser.add_argument('--runcount',
                         default=4,
                         type=int,
@@ -77,7 +82,7 @@ def _parse_args():
     return parser.parse_args()
 
 
-def _run_tests(benchmark, path, bin_name, pincpu):
+def _run_tests(benchmark, path, bin_name, filter_by_test_name, pincpu):
     """Run benchmark. Returns its results and total execution time."""
     outfile = os.path.abspath('{path}/outfile'.format(path=path))
 
@@ -85,10 +90,15 @@ def _run_tests(benchmark, path, bin_name, pincpu):
     if pincpu:
         cmd_pincpu = 'taskset -c {}'.format(pincpu)
 
+    options_list = [benchmark.reporter_option]
+    if filter_by_test_name:
+        options_list.append(
+            benchmark.filter_option_re.format(filter=filter_by_test_name))
+
     cmd_run = '{cmd_pincpu} ./{bin_name} {options} > {outfile}'.format(
         bin_name=bin_name,
         cmd_pincpu=cmd_pincpu,
-        options=benchmark.reporter_option,
+        options=' '.join(options_list),
         outfile=outfile)
 
     command = 'cd {path} && {cmd_run}'.format(path=path, cmd_run=cmd_run)
@@ -104,8 +114,9 @@ def _run_tests(benchmark, path, bin_name, pincpu):
     return RT(result=benchmark.parse_fun(outfile), time=final_ts - start_ts)
 
 
-def _run_benchmark(benchmark, path, bin_name, runcount, pincpu):
-    return [_run_tests(benchmark, path, bin_name, pincpu)
+def _run_benchmark(benchmark, path, bin_name, filter_by_test_name, runcount,
+                   pincpu):
+    return [_run_tests(benchmark, path, bin_name, filter_by_test_name, pincpu)
             for _ in range(runcount)]
 
 
@@ -114,18 +125,21 @@ def _run_benchmarks(args):
                             path=args.path_to_bins,
                             bin_name=args.sltbench_bin,
                             runcount=args.runcount,
+                            filter_by_test_name=args.filter,
                             pincpu=args.pincpu)
 
     res_gb = _run_benchmark(_BM_GOOGLEBENCH,
                             path=args.path_to_bins,
                             bin_name=args.googlebench_bin,
                             runcount=args.runcount,
+                            filter_by_test_name=args.filter,
                             pincpu=args.pincpu)
 
     res_nb = _run_benchmark(_BM_NONIUS,
                             path=args.path_to_bins,
                             bin_name=args.nonius_bin,
                             runcount=args.runcount,
+                            filter_by_test_name=args.filter,
                             pincpu=args.pincpu)
 
     RT = namedtuple('BenchmarksResults', 'sltbench,googlebench,nonius')
@@ -183,6 +197,9 @@ def _process_results(results):
     sb = _process_benchmark_results(results.sltbench)
     gb = _process_benchmark_results(results.googlebench)
     nb = _process_benchmark_results(results.nonius)
+
+    assert len(sb.tests_results) == len(gb.tests_results)
+    assert len(sb.tests_results) == len(nb.tests_results)
 
     def format_rel_error(err):
         return '{:.3f}'.format(err)
