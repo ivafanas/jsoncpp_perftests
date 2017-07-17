@@ -122,8 +122,14 @@ def _run_benchmarks(args):
                             runcount=args.runcount,
                             pincpu=args.pincpu)
 
+    res_nb = _run_benchmark(_BM_NONIUS,
+                            path=args.path_to_bins,
+                            bin_name=args.nonius_bin,
+                            runcount=args.runcount,
+                            pincpu=args.pincpu)
+
     RT = namedtuple('BenchmarksResults', 'sltbench,googlebench,nonius')
-    return RT(sltbench=res_sb, googlebench=res_gb, nonius=None)
+    return RT(sltbench=res_sb, googlebench=res_gb, nonius=res_nb)
 
 
 def _process_benchmark_results(results):
@@ -176,6 +182,7 @@ def _process_benchmark_results(results):
 def _process_results(results):
     sb = _process_benchmark_results(results.sltbench)
     gb = _process_benchmark_results(results.googlebench)
+    nb = _process_benchmark_results(results.nonius)
 
     def format_rel_error(err):
         return '{:.3f}'.format(err)
@@ -183,34 +190,45 @@ def _process_results(results):
     def format_exec_time(exec_time):
         return '{:.1f}'.format(exec_time)
 
-    def header_table_aligned_print(col1, col2, col3):
-        print('{:<20} {:>10} {:>10}'.format(col1, col2, col3))
+    def header_table_aligned_print(c1, c2, c3, c4):
+        print('{:<20} {:>12} {:>12} {:>12}'.format(c1, c2, c3, c4))
 
-    header_table_aligned_print('', 'sltbench', 'googlebench')
+    print('')
+    header_table_aligned_print('', 'sltbench', 'googlebench', 'nonius')
     header_table_aligned_print('execution_time, sec',
                                format_exec_time(sb.min_execution_time),
-                               format_exec_time(gb.min_execution_time))
+                               format_exec_time(gb.min_execution_time),
+                               format_exec_time(nb.min_execution_time),)
     header_table_aligned_print('avr_rel_error',
                                format_rel_error(sb.avr_rel_error),
-                               format_rel_error(gb.avr_rel_error))
+                               format_rel_error(gb.avr_rel_error),
+                               format_rel_error(nb.avr_rel_error),)
     header_table_aligned_print('max_rel_error',
                                format_rel_error(sb.max_rel_error),
-                               format_rel_error(gb.max_rel_error))
+                               format_rel_error(gb.max_rel_error),
+                               format_rel_error(nb.max_rel_error))
 
-    def content_table_aligned_print(col1, col2, col3, col4, col5):
-        print('{:<30} {:>14} {:>14} {:>14} {:>14}'.format(col1, col2, col3,
-                                                          col4, col5))
+    def content_table_aligned_print(c1, c2, c3, c4, c5, c6, c7):
+        print('{:<30} {:>13} {:>10} {:>13} {:>10} {:>13} {:>10}'
+              .format(c1, c2, c3, c4, c5, c6, c7))
 
-    content_table_aligned_print('test', 'sltbench_res', 'sltbench_err',
-                                'google_res', 'google_err')
+    print('')
+    content_table_aligned_print('test',
+                                'slt_res', 'slt_err',
+                                'google_res', 'google_err',
+                                'nonius_res',
+                                'nonius_err')
     for i_test in range(len(sb.tests_results)):
         sb_res = sb.tests_results[i_test]
         gb_res = gb.tests_results[i_test]
+        nb_res = nb.tests_results[i_test]
         content_table_aligned_print(sb_res.name,
                                     sb_res.time,
                                     format_rel_error(sb_res.rel_error),
                                     gb_res.time,
-                                    format_rel_error(gb_res.rel_error))
+                                    format_rel_error(gb_res.rel_error),
+                                    nb_res.time,
+                                    format_rel_error(nb_res.rel_error))
 
 
 def _main():
