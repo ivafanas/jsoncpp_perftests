@@ -87,11 +87,5 @@ cmake ${ROOT_DIR} \
 cmake --build ${BUILD_DIR}
 
 # run compare tool
-cd ${ROOT_DIR}
-python tools/compare.py \
-    --path_to_bins="$BUILD_DIR" \
-    --sltbench_bin=sltbench_perftests \
-    --googlebench_bin=googlebench_perftests \
-    --nonius_bin=nonius_perftests \
-    --runcount=4 \
-    --pincpu=1
+cp tools/aux/_compare.sh "${BUILD_DIR}"
+${BUILD_DIR}/_compare.sh
