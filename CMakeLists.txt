@@ -38,78 +38,84 @@ set_target_properties(common_tests PROPERTIES
 	CXX_EXTENSIONS NO)
 
 # sltbench performance tests
-add_executable(sltbench_perftests
-	tests/sltbench/sltbench_generator.h
-	tests/sltbench/main.cpp
-	tests/sltbench/reader.cpp
-	tests/sltbench/value.cpp
-	tests/sltbench/writer.cpp)
+if (JPT_SLTBENCH_INSTALL_DIR)
+	add_executable(sltbench_perftests
+		tests/sltbench/sltbench_generator.h
+		tests/sltbench/main.cpp
+		tests/sltbench/reader.cpp
+		tests/sltbench/value.cpp
+		tests/sltbench/writer.cpp)
 
-add_dependencies(sltbench_perftests common_tests)
+	add_dependencies(sltbench_perftests common_tests)
 
-target_include_directories(sltbench_perftests PRIVATE
-	tests/common
-	${JPT_SLTBENCH_INSTALL_DIR}/include
-	${JPT_JSONCPP_INSTALL_DIR}/include)
+	target_include_directories(sltbench_perftests PRIVATE
+		tests/common
+		${JPT_SLTBENCH_INSTALL_DIR}/include
+		${JPT_JSONCPP_INSTALL_DIR}/include)
 
-target_link_libraries(sltbench_perftests PRIVATE
-	${JPT_SLTBENCH_INSTALL_DIR}/lib/libsltbench.a
-	${JPT_BUILD_DIR}/libcommon_tests.a
-	${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a
-	${CMAKE_THREAD_LIBS_INIT})
+	target_link_libraries(sltbench_perftests PRIVATE
+		${JPT_SLTBENCH_INSTALL_DIR}/lib/libsltbench.a
+		${JPT_BUILD_DIR}/libcommon_tests.a
+		${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a
+		${CMAKE_THREAD_LIBS_INIT})
 
-set_target_properties(sltbench_perftests PROPERTIES
-	CXX_STANDARD 11
-	CXX_STANDARD_REQUIRED YES
-	CXX_EXTENSIONS NO)
+	set_target_properties(sltbench_perftests PROPERTIES
+		CXX_STANDARD 11
+		CXX_STANDARD_REQUIRED YES
+		CXX_EXTENSIONS NO)
+endif()
 
 # google bench performance tests
-add_executable(googlebench_perftests
-	tests/googlebench/googlebench_generator.h
-	tests/googlebench/main.cpp
-	tests/googlebench/reader.cpp
-	tests/googlebench/value.cpp
-	tests/googlebench/writer.cpp)
+if (JPT_GOOGLEBENCH_INSTALL_DIR)
+	add_executable(googlebench_perftests
+		tests/googlebench/googlebench_generator.h
+		tests/googlebench/main.cpp
+		tests/googlebench/reader.cpp
+		tests/googlebench/value.cpp
+		tests/googlebench/writer.cpp)
 
-add_dependencies(googlebench_perftests common_tests)
+	add_dependencies(googlebench_perftests common_tests)
 
-target_include_directories(googlebench_perftests PRIVATE
-	tests/common
-	${JPT_GOOGLEBENCH_INSTALL_DIR}/include
-	${JPT_JSONCPP_INSTALL_DIR}/include)
+	target_include_directories(googlebench_perftests PRIVATE
+		tests/common
+		${JPT_GOOGLEBENCH_INSTALL_DIR}/include
+		${JPT_JSONCPP_INSTALL_DIR}/include)
 
-target_link_libraries(googlebench_perftests PRIVATE
-	${JPT_GOOGLEBENCH_INSTALL_DIR}/lib/libbenchmark.a
-	${JPT_BUILD_DIR}/libcommon_tests.a
-	${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a
-	${CMAKE_THREAD_LIBS_INIT})
+	target_link_libraries(googlebench_perftests PRIVATE
+		${JPT_GOOGLEBENCH_INSTALL_DIR}/lib/libbenchmark.a
+		${JPT_BUILD_DIR}/libcommon_tests.a
+		${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a
+		${CMAKE_THREAD_LIBS_INIT})
 
-set_target_properties(googlebench_perftests PROPERTIES
-	CXX_STANDARD 11
-	CXX_STANDARD_REQUIRED YES
-	CXX_EXTENSIONS NO)
+	set_target_properties(googlebench_perftests PROPERTIES
+		CXX_STANDARD 11
+		CXX_STANDARD_REQUIRED YES
+		CXX_EXTENSIONS NO)
+endif()
 
 # nonius bench performance tests
-add_executable(nonius_perftests
-	tests/nonius/nonius_generator.h
-	tests/nonius/main.cpp
-	tests/nonius/reader.cpp
-	tests/nonius/value.cpp
-	tests/nonius/writer.cpp)
+if (JPT_NONIUS_INSTALL_DIR)
+	add_executable(nonius_perftests
+		tests/nonius/nonius_generator.h
+		tests/nonius/main.cpp
+		tests/nonius/reader.cpp
+		tests/nonius/value.cpp
+		tests/nonius/writer.cpp)
 
-add_dependencies(nonius_perftests common_tests)
+	add_dependencies(nonius_perftests common_tests)
 
-target_include_directories(nonius_perftests PRIVATE
-	tests/common
-	${JPT_NONIUS_INSTALL_DIR}/include
-	${JPT_JSONCPP_INSTALL_DIR}/include)
+	target_include_directories(nonius_perftests PRIVATE
+		tests/common
+		${JPT_NONIUS_INSTALL_DIR}/include
+		${JPT_JSONCPP_INSTALL_DIR}/include)
 
-target_link_libraries(nonius_perftests PRIVATE
-	${JPT_BUILD_DIR}/libcommon_tests.a
-	${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a
-	${CMAKE_THREAD_LIBS_INIT})
+	target_link_libraries(nonius_perftests PRIVATE
+		${JPT_BUILD_DIR}/libcommon_tests.a
+		${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a
+		${CMAKE_THREAD_LIBS_INIT})
 
-set_target_properties(nonius_perftests PROPERTIES
-	CXX_STANDARD 11
-	CXX_STANDARD_REQUIRED YES
-	CXX_EXTENSIONS NO)
+	set_target_properties(nonius_perftests PROPERTIES
+		CXX_STANDARD 11
+		CXX_STANDARD_REQUIRED YES
+		CXX_EXTENSIONS NO)
+endif()

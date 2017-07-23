@@ -47,8 +47,7 @@ def _parse_nonius_outfile(outfile):
         return rv
 
 
-_Benchmark = namedtuple('Benchmark',
-                        'reporter_option,filter_option_re,parse_fun')
+_Benchmark = namedtuple('Benchmark', 'reporter_option,filter_option_re,parse_fun')
 _BM_SLTBENCH = _Benchmark(reporter_option='--reporter=json',
                           filter_option_re='--filter=".*{filter}.*"',
                           parse_fun=_parse_sltbench_outfile)
@@ -71,13 +70,11 @@ def _parse_args():
     parser.add_argument('--runcount',
                         default=4,
                         type=int,
-                        help='count of benchmark runs to collect statistics. ' +
-                             'Default is 4.')
+                        help='count of benchmark runs to collect statistics. Default is 4.')
     parser.add_argument('--pincpu',
                         default=None,
-                        help='input arguments to taskset to pin benchmark to ' +
-                             'the cpu. No pinning by default because it is ' +
-                             'definitely machine-specific. Linux only. ' +
+                        help='input arguments to taskset to pin benchmark to the cpu. No pinning ' +
+                             'by default because it is definitely machine-specific. Linux only. ' +
                              'Currently not supported for Mac and Windows.')
     return parser.parse_args()
 
@@ -119,6 +116,11 @@ def _run_tests(benchmark, path, bin_name, filter_by_test_name, pincpu):
 
 def _run_benchmark(benchmark, path, bin_name, filter_by_test_name, runcount,
                    pincpu):
+    import os.path
+    bin_path = os.path.join(path, bin_name)
+    if not os.path.isfile(bin_path):
+        print('{bin_path} not found'.format(bin_path=bin_path))
+        return None
     return [_run_tests(benchmark, path, bin_name, filter_by_test_name, pincpu)
             for _ in range(runcount)]
 
@@ -150,6 +152,9 @@ def _run_benchmarks(args):
 
 
 def _process_benchmark_results(results):
+    if not results:
+        return None
+
     run_count = len(results)
     tests_count = len(results[0].result)
 
@@ -170,8 +175,7 @@ def _process_benchmark_results(results):
                 return float(value - origin) / origin
             return 0
 
-        rel_error = max(get_rel_error(time_avr, time_min),
-                        get_rel_error(time_avr, time_max))
+        rel_error = max(get_rel_error(time_avr, time_min), get_rel_error(time_avr, time_max))
 
         first_test_res = results[0].result[i_test]
         tests_bm_results.append(BMTestResult(name=first_test_res.name,
@@ -201,8 +205,24 @@ def _process_results(results):
     gb = _process_benchmark_results(results.googlebench)
     nb = _process_benchmark_results(results.nonius)
 
-    assert len(sb.tests_results) == len(gb.tests_results)
-    assert len(sb.tests_results) == len(nb.tests_results)
+    IRResT = namedtuple('IRResT', 'bm_full_name,bm_short_name,res')
+    ir_results = []
+    if sb:
+        ir_results.append(IRResT(bm_full_name='sltbench', bm_short_name='slt', res=sb))
+    if gb:
+        ir_results.append(IRResT(bm_full_name='googlebench', bm_short_name='google', res=gb))
+    if nb:
+        ir_results.append(IRResT(bm_full_name='nonius', bm_short_name='nonius', res=nb))
+
+    if not ir_results:
+        print('')
+        print('no performance results')
+        return
+
+    def print_header_table_row(cols):
+        assert len(cols) > 1
+        fmt = ' '.join(['{:<20}'] + ['{:>12}'] * (len(cols) - 1))
+        print(fmt.format(*cols))
 
     def format_rel_error(err):
         return '{:.3f}'.format(err)
@@ -210,45 +230,35 @@ def _process_results(results):
     def format_exec_time(exec_time):
         return '{:.1f}'.format(exec_time)
 
-    def header_table_aligned_print(c1, c2, c3, c4):
-        print('{:<20} {:>12} {:>12} {:>12}'.format(c1, c2, c3, c4))
+    print('')
+    print_header_table_row([''] + [x.bm_full_name for x in ir_results])
+    print_header_table_row(['execution_time, sec'] +
+                           [format_exec_time(x.res.min_execution_time) for x in ir_results])
+    print_header_table_row(['avr_rel_error'] +
+                           [format_rel_error(x.res.avr_rel_error) for x in ir_results])
+    print_header_table_row(['max_rel_error'] +
+                           [format_rel_error(x.res.max_rel_error) for x in ir_results])
+
+    def print_content_table_row(cols):
+        assert len(cols) > 1
+        assert len(cols) % 2 == 1
+        fmt = ' '.join(['{:<30}'] + ['{:>12} {:>13}'] * ((len(cols) - 1) / 2))
+        print(fmt.format(*cols))
 
     print('')
-    header_table_aligned_print('', 'sltbench', 'googlebench', 'nonius')
-    header_table_aligned_print('execution_time, sec',
-                               format_exec_time(sb.min_execution_time),
-                               format_exec_time(gb.min_execution_time),
-                               format_exec_time(nb.min_execution_time),)
-    header_table_aligned_print('avr_rel_error',
-                               format_rel_error(sb.avr_rel_error),
-                               format_rel_error(gb.avr_rel_error),
-                               format_rel_error(nb.avr_rel_error),)
-    header_table_aligned_print('max_rel_error',
-                               format_rel_error(sb.max_rel_error),
-                               format_rel_error(gb.max_rel_error),
-                               format_rel_error(nb.max_rel_error))
-
-    def content_table_aligned_print(c1, c2, c3, c4, c5, c6, c7):
-        print('{:<30} {:>13} {:>10} {:>13} {:>10} {:>13} {:>10}'
-              .format(c1, c2, c3, c4, c5, c6, c7))
-
-    print('')
-    content_table_aligned_print('test',
-                                'slt_res', 'slt_err',
-                                'google_res', 'google_err',
-                                'nonius_res',
-                                'nonius_err')
-    for i_test in range(len(sb.tests_results)):
-        sb_res = sb.tests_results[i_test]
-        gb_res = gb.tests_results[i_test]
-        nb_res = nb.tests_results[i_test]
-        content_table_aligned_print(sb_res.name,
-                                    sb_res.time,
-                                    format_rel_error(sb_res.rel_error),
-                                    gb_res.time,
-                                    format_rel_error(gb_res.rel_error),
-                                    nb_res.time,
-                                    format_rel_error(nb_res.rel_error))
+    content_header_cols = ['test']
+    for x in ir_results:
+        content_header_cols.append(x.bm_short_name + '_res')
+        content_header_cols.append(x.bm_short_name + '_err')
+    print_content_table_row(content_header_cols)
+    for i_test in range(len(ir_results[0].res.tests_results)):
+        test_name = ir_results[0].res.tests_results[i_test].name
+        cols = [test_name]
+        for ir_res in ir_results:
+           test_res = ir_res.res.tests_results[i_test]
+           cols.append(test_res.time)
+           cols.append(format_rel_error(test_res.rel_error))
+        print_content_table_row(cols)
 
 
 def _main():
