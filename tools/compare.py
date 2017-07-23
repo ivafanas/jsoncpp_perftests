@@ -86,9 +86,12 @@ def _run_tests(benchmark, path, bin_name, filter_by_test_name, pincpu):
     """Run benchmark. Returns its results and total execution time."""
     outfile = os.path.abspath('{path}/outfile'.format(path=path))
 
+    # setup cpu pinning. Supported for linux only.
     cmd_pincpu = ''
     if pincpu:
-        cmd_pincpu = 'taskset -c {}'.format(pincpu)
+        from sys import platform
+        if platform == "linux" or platform == "linux2":
+            cmd_pincpu = 'taskset -c {}'.format(pincpu)
 
     options_list = [benchmark.reporter_option]
     if filter_by_test_name:
