@@ -95,27 +95,36 @@ endif()
 
 # nonius bench performance tests
 if (JPT_NONIUS_INSTALL_DIR)
-	add_executable(nonius_perftests
-		tests/nonius/nonius_generator.h
-		tests/nonius/main.cpp
-		tests/nonius/reader.cpp
-		tests/nonius/value.cpp
-		tests/nonius/writer.cpp)
 
-	add_dependencies(nonius_perftests common_tests)
+	# nonius requires boost
+	find_package(Boost)
 
-	target_include_directories(nonius_perftests PRIVATE
-		tests/common
-		${JPT_NONIUS_INSTALL_DIR}/include
-		${JPT_JSONCPP_INSTALL_DIR}/include)
+	if(Boost_FOUND)
+		add_executable(nonius_perftests
+			tests/nonius/nonius_generator.h
+			tests/nonius/main.cpp
+			tests/nonius/reader.cpp
+			tests/nonius/value.cpp
+			tests/nonius/writer.cpp)
 
-	target_link_libraries(nonius_perftests PRIVATE
-		${JPT_BUILD_DIR}/libcommon_tests.a
-		${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a
-		${CMAKE_THREAD_LIBS_INIT})
+		add_dependencies(nonius_perftests common_tests)
 
-	set_target_properties(nonius_perftests PROPERTIES
-		CXX_STANDARD 11
-		CXX_STANDARD_REQUIRED YES
-		CXX_EXTENSIONS NO)
+		target_include_directories(nonius_perftests PRIVATE
+			tests/common
+			${JPT_NONIUS_INSTALL_DIR}/include
+			${JPT_JSONCPP_INSTALL_DIR}/include
+			${Boost_INCLUDE_DIRS})
+
+		target_link_libraries(nonius_perftests PRIVATE
+			${JPT_BUILD_DIR}/libcommon_tests.a
+			${JPT_JSONCPP_INSTALL_DIR}/lib/libjsoncpp.a
+			${CMAKE_THREAD_LIBS_INIT})
+
+		set_target_properties(nonius_perftests PROPERTIES
+			CXX_STANDARD 11
+			CXX_STANDARD_REQUIRED YES
+			CXX_EXTENSIONS NO)
+	else()
+		message(WARNING "Boost not found. Skip nonius benchmark")
+	endif()
 endif()
